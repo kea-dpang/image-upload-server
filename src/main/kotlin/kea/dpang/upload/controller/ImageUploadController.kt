@@ -1,5 +1,7 @@
 package kea.dpang.upload.controller
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import kea.dpang.upload.base.SuccessResponse
 import kea.dpang.upload.dto.UploadResponse
 import kea.dpang.upload.service.ImageUploadService
@@ -17,8 +19,11 @@ class ImageUploadController(
     private val imageUploadService: ImageUploadService
 ) {
 
+    @Operation(summary = "파일 업로드", description = "파일을 업로드하고, 업로드된 파일에 접근할 수 있는 URL을 반환한다.")
     @PostMapping(consumes = ["multipart/form-data"], produces = ["application/json"])
-    fun uploadFile(@RequestParam("file") file: MultipartFile): ResponseEntity<SuccessResponse<UploadResponse>> {
+    fun uploadFile(
+        @Parameter(description = "업로드할 파일", required = true) @RequestParam("file") file: MultipartFile
+    ): ResponseEntity<SuccessResponse<UploadResponse>> {
         // 업로드할 파일의 경로, 이름, 컨텐트 타입을 설정한다.
         val path = "image"
         val fileName = file.originalFilename ?: "default.jpg"
