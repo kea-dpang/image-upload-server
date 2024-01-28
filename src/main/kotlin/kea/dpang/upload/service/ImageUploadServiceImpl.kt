@@ -12,6 +12,8 @@ class ImageUploadServiceImpl(
     private val kakaoCloudObjectStorageClient: KakaoCloudObjectStorageClient
 ) : ImageUploadService {
 
+    val baseUrl = "https://objectstorage.kr-gov-central-1.kakaoicloud-kr-gov.com/v1/"
+
     @Value("\${kakao-cloud.account}")
     private lateinit var account: String
 
@@ -25,7 +27,7 @@ class ImageUploadServiceImpl(
 
     override fun uploadFile(
         path: String,
-        file: String,
+        fileName: String,
         contentType: String?,
         data: MultipartFile
     ) {
@@ -33,11 +35,23 @@ class ImageUploadServiceImpl(
             account = account,
             bucket = bucket,
             path = path,
-            file = file,
+            fileName = fileName,
             token = apiKey,
             data = data
         )
 
-        log.info(result.toString())
+        val uploadedFileUrl = "$baseUrl$account/$bucket/$path/$fileName"
+
+        val logMessage = StringBuilder().apply {
+            append("파일 업로드 요청이 완료되었습니다.\n")
+            append("업로드 결과: ${if (result.status() == 201) "성공" else "실패"}\n")
+            append("HTTP 상태: ${result.status()}\n")
+            append("Response Headers: ${result.headers()}\n")
+            append("업로드된 파일 URL: $uploadedFileUrl\n")
+        }.toString()
+
+        log.info(logMessage)
+
     }
+
 }

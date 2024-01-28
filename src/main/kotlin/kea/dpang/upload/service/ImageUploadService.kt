@@ -12,13 +12,13 @@ interface ImageUploadService {
      * 파일 업로드 메소드
      *
      * @param path 파일 경로
-     * @param file 파일 이름
+     * @param fileName 파일 이름
      * @param contentType 콘텐츠 타입
      * @param data 업로드할 파일 데이터
      */
     fun uploadFile(
         path: String,
-        file: String,
+        fileName: String,
         contentType: String?,
         data: MultipartFile
     )
