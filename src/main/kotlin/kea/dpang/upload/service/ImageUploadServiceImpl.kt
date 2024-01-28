@@ -1,5 +1,6 @@
 package kea.dpang.upload.service
 
+import kea.dpang.upload.exception.UnauthorizedException
 import kea.dpang.upload.feign.KakaoCloudObjectStorageClient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -31,6 +32,7 @@ class ImageUploadServiceImpl(
         contentType: String?,
         data: MultipartFile
     ): String {
+        // 파일을 업로드하고 결과를 받는다.
         val result = kakaoCloudObjectStorageClient.uploadFile(
             account = account,
             bucket = bucket,
@@ -40,8 +42,16 @@ class ImageUploadServiceImpl(
             data = data
         )
 
+        // HTTP 상태 코드가 401이라면 권한이 없는 경우이므로 UnauthorizedException을 던진다.
+        // 참고) https://console.kakaoicloud-kr-gov.com/docs/guide/objectstorage/api/api_object
+        if (result.status() == 401) {
+            throw UnauthorizedException()
+        }
+
+        // 업로드된 파일에 접근할 수 있는 URL을 만듭니다.
         val uploadedFileUrl = "$baseUrl$account/$bucket/$path/$fileName"
 
+        // 로그 메시지를 만들고 출력한다.
         val logMessage = StringBuilder().apply {
             append("파일 업로드 요청이 완료되었습니다.\n")
             append("업로드 결과: ${if (result.status() == 201) "성공" else "실패"}\n")
@@ -52,6 +62,7 @@ class ImageUploadServiceImpl(
 
         log.info(logMessage)
 
+        // 업로드된 파일의 URL을 반환한다.
         return uploadedFileUrl
     }
 
