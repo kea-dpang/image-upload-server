@@ -29,7 +29,6 @@ class ImageUploadServiceImpl(
     override fun uploadFile(
         path: String,
         fileName: String,
-        contentType: String?,
         data: MultipartFile
     ): String {
         // 파일을 업로드하고 결과를 받는다.

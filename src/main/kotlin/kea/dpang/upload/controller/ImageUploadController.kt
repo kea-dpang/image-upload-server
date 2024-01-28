@@ -27,10 +27,9 @@ class ImageUploadController(
         // 업로드할 파일의 경로, 이름, 컨텐트 타입을 설정한다.
         val path = "image"
         val fileName = file.originalFilename ?: "default.jpg"
-        val contentType = file.contentType ?: "application/octet-stream"
 
         // 파일을 업로드하고, 업로드된 파일의 URL을 받는다.
-        val uploadedFileUrl = imageUploadService.uploadFile(path, fileName, contentType, file)
+        val uploadedFileUrl = imageUploadService.uploadFile(path, fileName, file)
 
         // 성공 응답 객체를 생성한다.
         val successResponse = SuccessResponse(
