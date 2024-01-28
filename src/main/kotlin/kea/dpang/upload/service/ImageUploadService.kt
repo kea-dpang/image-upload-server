@@ -21,5 +21,5 @@ interface ImageUploadService {
         fileName: String,
         contentType: String?,
         data: MultipartFile
-    )
+    ) : String
 }

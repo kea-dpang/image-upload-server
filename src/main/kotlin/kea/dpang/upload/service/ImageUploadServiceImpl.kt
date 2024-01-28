@@ -30,7 +30,7 @@ class ImageUploadServiceImpl(
         fileName: String,
         contentType: String?,
         data: MultipartFile
-    ) {
+    ): String {
         val result = kakaoCloudObjectStorageClient.uploadFile(
             account = account,
             bucket = bucket,
@@ -52,6 +52,7 @@ class ImageUploadServiceImpl(
 
         log.info(logMessage)
 
+        return uploadedFileUrl
     }
 
 }
