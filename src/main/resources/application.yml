@@ -6,3 +6,7 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+
+logging:
+  level:
+    kea.dpang.upload.feign.KakaoCloudObjectStorageClient: DEBUG
