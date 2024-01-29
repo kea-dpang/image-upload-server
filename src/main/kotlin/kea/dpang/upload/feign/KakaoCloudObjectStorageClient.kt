@@ -18,7 +18,7 @@ interface KakaoCloudObjectStorageClient {
      * @param bucket 버킷 이름
      * @param path 파일 경로
      * @param fileName 파일 이름
-     * @param token 사용자 인증 토큰
+     * @param headers HTTP 헤더
      * @param data 업로드할 파일 데이터
      * @return HTTP 응답
      */
@@ -28,7 +28,7 @@ interface KakaoCloudObjectStorageClient {
         @PathVariable("bucket") bucket: String,
         @PathVariable("path") path: String,
         @PathVariable("file") fileName: String,
-        @RequestHeader("X-Auth-Token") token: String,
+        @RequestHeader headers: Map<String, String>,
         @RequestBody data: MultipartFile
     ): Response
 
