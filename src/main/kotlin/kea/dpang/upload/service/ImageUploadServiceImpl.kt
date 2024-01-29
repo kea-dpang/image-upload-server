@@ -10,20 +10,16 @@ import org.springframework.web.multipart.MultipartFile
 
 @Service
 class ImageUploadServiceImpl(
-    private val kakaoCloudObjectStorageClient: KakaoCloudObjectStorageClient
+    private val kakaoCloudObjectStorageClient: KakaoCloudObjectStorageClient,
+    private val apiKeyService: ApiKeyService,
+    @Value("\${kakao-cloud.account}") private val account: String,
+    @Value("\${kakao-cloud.bucket}") private val bucket: String,
 ) : ImageUploadService {
 
-    val baseUrl = "https://objectstorage.kr-gov-central-1.kakaoicloud-kr-gov.com/v1/"
+    // Kakao Cloud Info
+    private val baseUrl = "https://objectstorage.kr-gov-central-1.kakaoicloud-kr-gov.com/v1/"
 
-    @Value("\${kakao-cloud.account}")
-    private lateinit var account: String
-
-    @Value("\${kakao-cloud.bucket}")
-    private lateinit var bucket: String
-
-    @Value("\${kakao-cloud.api-key}")
-    private lateinit var apiKey: String
-
+    // Log
     private val log = LoggerFactory.getLogger(ImageUploadServiceImpl::class.java)
 
     override fun uploadFile(
@@ -37,7 +33,7 @@ class ImageUploadServiceImpl(
             bucket = bucket,
             path = path,
             fileName = fileName,
-            token = apiKey,
+            token = apiKeyService.getApiKey(),
             data = data
         )
 
@@ -47,7 +43,7 @@ class ImageUploadServiceImpl(
             throw UnauthorizedException()
         }
 
-        // 업로드된 파일에 접근할 수 있는 URL을 만듭니다.
+        // 업로드된 파일에 접근할 수 있는 URL을 만든다.
         val uploadedFileUrl = "$baseUrl$account/$bucket/$path/$fileName"
 
         // 로그 메시지를 만들고 출력한다.
