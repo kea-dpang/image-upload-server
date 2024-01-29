@@ -23,17 +23,23 @@ class ImageUploadServiceImpl(
     private val log = LoggerFactory.getLogger(ImageUploadServiceImpl::class.java)
 
     override fun uploadFile(
-        path: String,
-        fileName: String,
         data: MultipartFile
     ): String {
+        // 업로드할 파일의 경로, 이름, 컨텐트 타입을 설정한다.
+        val path = "image"
+        val fileName = data.originalFilename ?: "default.jpg"
+
         // 파일을 업로드하고 결과를 받는다.
+        val headers = mutableMapOf<String, String>()
+        headers["X-Auth-Token"] = apiKeyService.getApiKey()
+        headers["Content-Type"] = data.contentType ?: "application/octet-stream"
+
         val result = kakaoCloudObjectStorageClient.uploadFile(
             account = account,
             bucket = bucket,
             path = path,
             fileName = fileName,
-            token = apiKeyService.getApiKey(),
+            headers = headers,
             data = data
         )
 
