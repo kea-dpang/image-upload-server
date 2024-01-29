@@ -40,7 +40,7 @@ class ImageUploadServiceImpl(
             path = path,
             fileName = fileName,
             headers = headers,
-            data = data
+            data = data.bytes
         )
 
         // HTTP 상태 코드가 401이라면 권한이 없는 경우이므로 UnauthorizedException을 던진다.

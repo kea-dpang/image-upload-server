@@ -22,14 +22,14 @@ interface KakaoCloudObjectStorageClient {
      * @param data 업로드할 파일 데이터
      * @return HTTP 응답
      */
-    @PutMapping("/v1/{account}/{bucket}/{path}/{file}", consumes = ["multipart/form-data"])
+    @PutMapping("/v1/{account}/{bucket}/{path}/{file}", consumes = ["application/octet-stream"])
     fun uploadFile(
         @PathVariable("account") account: String,
         @PathVariable("bucket") bucket: String,
         @PathVariable("path") path: String,
         @PathVariable("file") fileName: String,
         @RequestHeader headers: Map<String, String>,
-        @RequestBody data: MultipartFile
+        @RequestBody data: ByteArray
     ): Response
 
 }
