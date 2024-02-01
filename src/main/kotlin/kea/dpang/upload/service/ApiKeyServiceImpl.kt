@@ -22,7 +22,7 @@ class ApiKeyServiceImpl(
 
     private var apiKey: String? = null
 
-    @Scheduled(fixedRate = 2 * 60 * 60 * 1000 + 50 * 60 * 1000) // 2시간 50분마다 실행
+    @Scheduled(fixedRate = 11 * 60 * 60 * 1000 + 50 * 60 * 1000) // 11시간 50분마다 실행
     override fun updateApiKey() {
         val authRequest = AuthRequest(
             auth = Auth(
