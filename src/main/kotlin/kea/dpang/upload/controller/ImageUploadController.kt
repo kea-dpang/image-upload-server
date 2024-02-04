@@ -7,10 +7,8 @@ import kea.dpang.upload.dto.UploadResponse
 import kea.dpang.upload.service.ImageUploadService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
@@ -21,7 +19,12 @@ class ImageUploadController(
 
     @Operation(summary = "파일 업로드", description = "파일을 업로드하고, 업로드된 파일에 접근할 수 있는 URL을 반환한다.")
     @PostMapping(consumes = ["multipart/form-data"], produces = ["application/json"])
+    @PreAuthorize("#role == 'ADMIN' or #role == 'SUPER_ADMIN'")
     fun uploadFile(
+        @Parameter(hidden = true)
+        @RequestHeader("X-DPANG-CLIENT-ID") clientId: Long,
+        @Parameter(hidden = true)
+        @RequestHeader("X-DPANG-CLIENT-ROLE") role: String,
         @Parameter(description = "업로드할 파일", required = true) @RequestParam("file") file: MultipartFile
     ): ResponseEntity<SuccessResponse<UploadResponse>> {
         // 파일을 업로드하고, 업로드된 파일의 URL을 받는다.
