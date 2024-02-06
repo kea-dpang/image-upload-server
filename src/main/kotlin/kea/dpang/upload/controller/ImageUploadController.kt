@@ -22,8 +22,6 @@ class ImageUploadController(
     @PreAuthorize("#role == 'ADMIN' or #role == 'SUPER_ADMIN'")
     fun uploadFile(
         @Parameter(hidden = true)
-        @RequestHeader("X-DPANG-CLIENT-ID") clientId: Long,
-        @Parameter(hidden = true)
         @RequestHeader("X-DPANG-CLIENT-ROLE") role: String,
         @Parameter(description = "업로드할 파일", required = true) @RequestParam("file") file: MultipartFile
     ): ResponseEntity<SuccessResponse<UploadResponse>> {
