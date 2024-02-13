@@ -15,7 +15,7 @@ sequenceDiagram
     participant Client as Client
     participant Gateway as Spring Cloud Gateway
     participant UploadService as Upload Server
-    participant MySQL as MySQL
+    participant KC as KC Object Storage
     
     Client ->> Gateway: 요청 전송 (JWT 토큰 포함)
     Gateway ->> Gateway: 요청 인증 및 인가
@@ -25,8 +25,8 @@ sequenceDiagram
         UploadService ->> UploadService: 해당 요청 권한 식별
 
         alt 요청이 역할에 적합
-            UploadService ->> MySQL: 데이터 요청
-            MySQL -->> UploadService: 데이터 응답
+            UploadService ->> KC: 파일 업로드 요청
+            KC -->> UploadService: 파일 업로드 응답
             UploadService ->> UploadService: 응답 처리
             UploadService -->> Gateway: 응답 전송
             Gateway -->> Client: 최종 응답 전달
@@ -42,11 +42,18 @@ sequenceDiagram
 
 ```
 
-이 시퀀스 다이어그램을 통해 볼 수 있듯이, 모든 클라이언트 요청은 Spring Cloud Gateway를 통해 인증 단계를 거칩니다.
-이 인증이 성공적으로 완료된 요청만이 서비스 요청을 계속 진행할 수 있습니다.
+이 시퀀스 다이어그램을 통해 볼 수 있듯이, 모든 클라이언트 요청은 먼저 Spring Cloud Gateway를 통해 전달됩니다.
 
-인증이 성공적으로 이루어지면, 'X-DPANG-CLIENT-ID'와 'X-DPANG-CLIENT-ROLE'이라는 사용자 정의 헤더에 각각 사용자의 ID와 Role 정보가 추가되어 Upload 서비스에 전달됩니다.
-이 헤더 정보를 통해 Upload 서비스는 요청을 보낸 사용자를 정확히 인식하고, 요청을 적절하게 처리한 후 결과를 반환합니다.
+Gateway는 클라이언트의 요청에 대한 토큰을 분석하고, 사용자의 ID와 Role 정보를 추출하여
+'X-DPANG-CLIENT-ID'와 'X-DPANG-CLIENT-ROLE'이라는 사용자 정의 헤더에 추가하여 업로드 서비스에 전달합니다.
+
+업로드 서비스는 해당 요청에 대한 권한을 식별하고, 권한이 있는 경우에만 요청을 처리합니다.
+
+권한이 있는 경우, 업로드 서비스는 카카오 클라우드 객체 스토리지에 파일 업로드 요청을 전달하고, 그 결과를 클라이언트에게 반환합니다.
+
+만약 해당 요청에 대한 권한이 없는 경우, 업로드 서비스는 클라이언트에게 '사용자 권한 없음' 응답을 반환하며
+
+해당 요청에 대한 인증이 실패한 경우, Gateway는 클라이언트에게 '인증 실패' 응답을 반환합니다.
 
 ## ✅ 프로젝트 실행
 
